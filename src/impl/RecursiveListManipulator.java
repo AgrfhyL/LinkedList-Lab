@@ -16,56 +16,140 @@ public class RecursiveListManipulator implements IListManipulator {
 
     @Override
     public int size(ListNode head) {
-        // TODO Auto-generated method stub
-        return 0;
+        if (head == null) {
+            return 0;
+        } else {
+            head.previous.next = null;
+            int sizey = 1 + size(head.next);
+            head.previous.next = head;
+            return sizey;
+        }
     }
 
     @Override
     public boolean isEmpty(ListNode head) {
-        // TODO Auto-generated method stub
-        return false;
+        return head == null;
     }
 
     @Override
     public boolean contains(ListNode head, Object element) {
-        // TODO Auto-generated method stub
-        return false;
+        if (head == null) {
+            return false;
+        } else if (!head.element.equals(element)) {
+            head.previous.next = null;
+            boolean out = contains(head.next, element);
+            head.previous.next = head;
+            return out;
+        } else {
+            return true;
+        }
     }
 
     @Override
     public int count(ListNode head, Object element) {
-        // TODO Auto-generated method stub
-        return 0;
+        if (head == null) {
+            return 0;
+        } else if (!head.element.equals(element)) {
+            head.previous.next = null;
+            int count = count(head.next, element);
+            head.previous.next = head;
+            return count;
+        } else {
+            head.previous.next = null;
+            int count = count(head.next, element);
+            head.previous.next = head;
+            return 1 + count;
+        }
     }
 
     @Override
     public String convertToString(ListNode head) {
-        // TODO Auto-generated method stub
-        return null;
+        if (head == null) {
+            return "";
+        } else {
+            head.previous.next = null;
+            String ele;
+            ele = convertToString(head.next);
+            head.previous.next = head;
+            if (size(head) == 1)
+                return head.element.toString() + ele;
+            else
+                return head.element.toString() + "," + ele;
+        }
     }
 
     @Override
     public Object getFromFront(ListNode head, int n) throws InvalidIndexException {
-        // TODO Auto-generated method stub
-        return null;
+        if (n > size(head) || head == null) {
+            throw new InvalidIndexException();
+        } else if (n == 0) {
+            return head.element;
+        } else {
+            return getFromFront(head.next, n-1);
+        }
     }
 
     @Override
     public Object getFromBack(ListNode head, int n) throws InvalidIndexException {
-        // TODO Auto-generated method stub
-        return null;
+        if (head == null || n > size(head)) {
+            throw new InvalidIndexException();
+        } else if (n == 0) {
+            return head.previous.element;
+        } else {
+            return getFromBack(head.previous, n-1);
+        }
     }
 
     @Override
     public boolean equals(ListNode head1, ListNode head2) {
-        // TODO Auto-generated method stub
-        return false;
+        if (head1 == null || head2 == null) {
+            return size(head1) == size(head2);
+        } else if (!head1.element.equals(head2.element)) {
+            return false;
+        } else {
+            head1.previous.next = null;
+            head2.previous.next = null;
+            boolean equals = equals(head1.next, head2.next);
+            head1.previous.next = head1;
+            head2.previous.next = head2;
+            return equals;
+        }
     }
 
     @Override
     public boolean containsDuplicates(ListNode head) {
-        // TODO Auto-generated method stub
-        return false;
+        if (head == null) {
+            return false;
+        } else {
+            int size = size(head);
+            head.previous.next = null;
+            boolean duplicate = thisAchorTraversedHasDuplicates(head, size) || containsDuplicates(head.next);
+            //idk
+            // should be something like return duplicate || containsDuplicates(head.next)
+            // where each new call acts as a big iteration in a nested for-loop algorithm
+            // but i don't know how i can do this without another iterative method
+            head.previous.next = head;
+            return duplicate;
+        }
+    }
+    //below is a containsDuplicates helper method
+    public boolean thisAchorTraversedHasDuplicates(ListNode head, int size) {
+        if (head == null) {
+            return false;
+        } else {
+            ListNode anchored = head;
+            ListNode moving = head.next;
+            for (int i = 0; i < size; i++) {
+                if (moving == null) {
+                    return false;
+                }
+                if (anchored.element.equals(moving.element)) {
+                    return true;
+                }
+                moving = moving.next;
+            }
+            return false;
+        }
     }
     
     @Override

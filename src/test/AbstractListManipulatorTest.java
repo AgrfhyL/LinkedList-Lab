@@ -307,7 +307,7 @@ public abstract class AbstractListManipulatorTest {
     {
         assertTimeoutPreemptively(Duration.ofMillis(TIME_LIMIT), () -> assertNull(manipulator.delete(list1, FIVE)));
         assertTimeoutPreemptively(Duration.ofMillis(TIME_LIMIT), () -> assertTrue(manipulator.equals(list12, manipulator.delete(list12, TWO)))); 
-        assertTimeoutPreemptively(Duration.ofMillis(TIME_LIMIT), () -> assertTrue(manipulator.equals(list10, manipulator.delete(list2, FIVE))));
+        assertTimeoutPreemptively(Duration.ofMillis(TIME_LIMIT), () -> assertTrue(manipulator.equals(list10, manipulator.delete(list2, THREE))));
         assertTimeoutPreemptively(Duration.ofMillis(TIME_LIMIT), () -> assertTrue(manipulator.equals(list16, manipulator.delete(list6, FIVE))));
     }
 
