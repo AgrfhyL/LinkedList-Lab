@@ -18,12 +18,14 @@ public class ListManipulator implements IListManipulator {
     public int size(ListNode head) {
         if (head == null)
             return 0;
+
         ListNode current = head;
         int count = 0;
         while (current.next != head) {
             count++;
             current = current.next;
         }
+
         return count+1;
     }
 
@@ -36,6 +38,7 @@ public class ListManipulator implements IListManipulator {
     public boolean contains(ListNode head, Object element) {
         if (head == null)
             return false;
+
         ListNode current = head;
         while (!current.element.equals(element)) { // if exit loop, definitely found
             if (current.next == head) { //if is at last element
@@ -68,10 +71,8 @@ public class ListManipulator implements IListManipulator {
             return out;
         else {
             out += head.element.toString();
-            ListNode cur = head;
-            for (int i = 0; i < size(head) + 1; i++) {
-                cur = cur.next;
-            }
+            ListNode cur = head.next;
+            //traverses the rest, previous 2 lines just make the loop condition easier
             while (cur != head) {
                 out += "," + cur.element.toString();
                 cur = cur.next;
@@ -130,6 +131,8 @@ public class ListManipulator implements IListManipulator {
         if (size(head) <= 1) {
             return false;
         }
+        //basically going to implement a nested for loop traversal like with a 1d array
+        //but since no direct access, must create 2 ListNodes to store the stationary arr[i] and moving arr[j]
         ListNode anchor = head;
         ListNode sweeper = head.next;
         for (int i = 0; i < size(head)-1; i++) {
@@ -159,11 +162,13 @@ public class ListManipulator implements IListManipulator {
             return head1;
         else if (head1 == null)
             return head2;
+
         head1.previous.next = head2;
         ListNode temp = head1.previous;
         head1.previous = head2.previous;
         head2.previous.next = head1;
         head2.previous = temp;
+
         return head1;
     }
 
@@ -181,10 +186,12 @@ public class ListManipulator implements IListManipulator {
         for (int i = 0; i < n; i++) { // this loop condition will allow current to become the last element
             current = current.next;
         }
+        //perform insertion
         node.next = current;
         node.previous = current.previous;
         current.previous.next = node;
         current.previous = node;
+
         if (n == 0) {
             head = node;
         }
@@ -192,7 +199,6 @@ public class ListManipulator implements IListManipulator {
     }
 
     public ListNode delete(ListNode head, Object elem) {
-        System.out.println("original: " + convertToString(head) + "looking for: " + elem.toString());
         if (head == null) { //size = 0
             return null;
         } else if (head.next == head) { //size = 1
@@ -200,63 +206,28 @@ public class ListManipulator implements IListManipulator {
                 return null;
             }
             return head;
+
         } else {
             ListNode current = head;
             do {
                 if (current.element.equals(elem)) {
-                    System.out.println("found");
                     current.previous.next = current.next;
                     current.next.previous = current.previous;
-                    System.out.println("current removed");
                     if (head == current) {
                         head = current.next;
-                        System.out.println("head updated");
                     }
-                    System.out.println(convertToString(head));
                     return head;
                 }
                 current = current.next;
             } while (current != head);
-            System.out.println("not found");
-            System.out.println(convertToString(head));
+
             return head;
         }
     }
 
     @Override
     public ListNode reverse(ListNode head) {
-        /*
-        int size = size(head);
-        if (size == 0 || size == 1) {
-            return head;
-        }
-        ListNode current = head;
-        ListNode opposite = head.previous;
-        for (int i = 0; i < size/2; i++) {
-            // perform swap
-            ListNode oPrev = opposite.previous;
-            ListNode oNext = opposite.next;
-            ListNode cPrev = current.previous;
-            ListNode cNext = current.next;
-            current.next.previous = opposite;
-            opposite.next.previous = current;
-            current.previous.next = opposite;
-            opposite.previous.next = current;
-            current.next = oNext;
-            current.previous = oPrev;
-            opposite.next = cNext;
-            opposite.previous = cPrev;
-            if (i == 0) {
-                head = opposite;
-            }
-            current = current.next;
-            opposite = opposite.previous;
-        }
-        return head;
-        ITS ACTUALLY TOO MUCH TO PROCESS. MY CPU CAN'T HANDLE
-         */
         // below is the chatgpt solution that i've made efforts to understand (and have)
-
         if (head == null || head.next == head) { // Empty list or single node
             return head;
         }
@@ -285,6 +256,7 @@ public class ListManipulator implements IListManipulator {
         } else if (head.next == head) {
             throw new InvalidListException();
         } else {
+            //storing for easy access & prevent losing later
             ListNode tail = head.previous;
             ListNode current = head;
             do {
@@ -292,11 +264,13 @@ public class ListManipulator implements IListManipulator {
                     if (current == head) {
                         throw new InvalidListException();
                     }
+                    //break entire list's circular link –> make 2 individual circular links
                     current.previous.next = head;
                     head.previous = current.previous;
                     current.previous = tail;
                     tail.next = current;
 
+                    //making the new list doubly & circularly linked
                     ListNode out = new ListNode(head);
                     ListNode two = new ListNode(current);
                     out.next = two;

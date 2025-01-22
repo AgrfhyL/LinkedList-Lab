@@ -151,41 +151,102 @@ public class RecursiveListManipulator implements IListManipulator {
             return false;
         }
     }
-    
+
+    // no need for iteration/recursion
     @Override
     public ListNode addHead(ListNode head, ListNode node) {
-        // TODO Auto-generated method stub
-        return null;
+        node.previous = head.previous;
+        head.previous.next = node;
+        node.next = head;
+        head.previous = node;
+        return node;
     }
 
+
+    // no need fore iteration/recursion
     @Override
     public ListNode append(ListNode head1, ListNode head2) {
-        // TODO Auto-generated method stub
-        return null;
+        if (head2 == null)
+            return head1;
+        else if (head1 == null)
+            return head2;
+        head1.previous.next = head2;
+        ListNode temp = head1.previous;
+        head1.previous = head2.previous;
+        head2.previous.next = head1;
+        head2.previous = temp;
+        return head1;
     }
 
     @Override
     public ListNode insert(ListNode head, ListNode node, int n) throws InvalidIndexException {
-        // TODO Auto-generated method stub
-        return null;
+        if (n < 0 || n > size(head)) {
+            throw new InvalidIndexException();
+        } else if (n == 0) {
+            head.previous.next = node;
+            node.previous = head.previous;
+            head.previous = node;
+            node.next = head;
+            return node; //vs. return head, inserted node should be the new head
+        }
+
+        head.next = insert(head.next, node, n-1); // after this call, head –> head.next, head.next will be a separate list
+        // with its new head: node. However, by storing this in head.next, we link it up
+        head.previous.next = head;
+        //because access to head.previous is outside of recursion, head.previous is still original, links the whole thing back together
+        return head;
     }
+
 
     @Override
     public ListNode delete(ListNode head, Object elem) {
-        // TODO Auto-generated method stub
-        return null;
+        if (head == null) {
+            return null;
+        }
+        if (head.next == null) {
+            if (head.element.equals(elem)) {
+                return null;
+            } else {
+                return head;
+            }
+        }
+        if (head.next == head) {
+            if (head.element.equals(elem))
+                return null;
+            else
+                return head;
+        }
+        if (head.element.equals(elem)) {
+            head.previous.next = head.next;
+            head.next.previous = head.previous;
+            return head.next;
+        }
+        head.previous.next = null;
+        head.next = delete(head.next, elem);
+        head.previous.next = head;
+        return head;
+
     }
 
 
     @Override
     public ListNode reverse(ListNode head) {
-        // TODO Auto-generated method stub
-        return null;
+        if (head == null || head.next == head)
+            return head;
+
+        ListNode temp = head.previous;
+        head.previous = head.next;
+        head.next = temp;
+
+        if (head.next.next == head) {
+            return reverse(head.next);
+        } else {
+            return head.previous;
+        }
     }
 
     @Override
     public ListNode split(ListNode head, ListNode node) throws InvalidListException {
-        // TODO Auto-generated method stub
         return null;
     }
 
